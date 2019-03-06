@@ -11,12 +11,14 @@ import {
 import { connect } from "react-redux";
 
 import { addPlace } from "../../store/actions/index";
-import DefaultInput from "../../components/UI/DefaultInput/DefaultInput";
+import PlaceInput from "../../components/PlaceInput/PlaceInput";
 import MainText from "../../components/UI/MainText/MainText";
 import HeadingText from "../../components/UI/HeadingText/HeadingText";
-import imagePlaceholder from "../../assets/beautiful-place.jpg";
+import PickImage from "../../components/PickImage/PickImage";
+import PickLocation from "../../components/PickLocation/PickLocation";
 
 class SharePlaceScreen extends Component {
+
   constructor(props) {
     super(props);
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent);
@@ -43,19 +45,9 @@ class SharePlaceScreen extends Component {
           <MainText>
             <HeadingText>Share a Place with us!</HeadingText>
           </MainText>
-          <View style={styles.placeholder}>
-            <Image source={imagePlaceholder} style={styles.previewImage} />
-          </View>
-          <View style={styles.button}>
-            <Button title="Pick Image" />
-          </View>
-          <View style={styles.placeholder}>
-            <Text>Map</Text>
-          </View>
-          <View style={styles.button}>
-            <Button title="Locate Me" />
-          </View>
-          <DefaultInput placeholder="Place Name" />
+          <PickImage />
+          <PickLocation />
+          <PlaceInput />
           <View style={styles.button}>
             <Button title="Share the Place!" />
           </View>
@@ -81,8 +73,8 @@ const styles = StyleSheet.create({
     margin: 8
   },
   previewImage: {
-      width: "100%",
-      height: "100%"
+    width: "100%",
+    height: "100%"
   }
 });
 
