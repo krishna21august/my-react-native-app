@@ -86,6 +86,7 @@ class AuthScreen extends Component {
               placeholder="Your E-Mail Address"
               style={styles.input}
               value={this.state.controls.email.value}
+              onTextChange= 
             />
             <View
               style={
