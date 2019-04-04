@@ -51,9 +51,9 @@ const startTabs = () => {
             },
             appStyle: {
                 tabBarSelectedButtonColor: "orange"
-            },
+            }
         });
     });
-};
+}
 
 export default startTabs;

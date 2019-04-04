@@ -1,4 +1,4 @@
-package com.mobileapp;
+package com.rncourse;
 
 import com.reactnativenavigation.controllers.SplashActivity;
 
