@@ -1,9 +1,31 @@
 import * as actionTypes from './actionTypes';
 
-export const addPlace = (placeName) => {
-    return {
-        type: actionTypes.ADD_PLACE,
-        placeName: placeName
+export const addPlace = (placeName, location, image) => {
+    return dispatch => {
+        const placeData = {
+            name: placeName,
+            location: location
+        }
+        fetch("https://us-central1-rn-course-1554131679313.cloudfunctions.net/storeImage", {
+            method: "POST",
+            body: JSON.stringify({
+                image: image.base64
+            })
+        })
+            .catch(err => console.log(err))
+            .then(res => res.json())
+            .then(parsedRes => {
+                console.log(parsedRes);
+            })
+        // fetch("https://rn-course-1554131679313.firebaseio.com/places.json", {
+        //     method: "POST",
+        //     body: JSON.stringify(placeData)
+        // })
+        //     .catch(err => console.log(err))
+        //     .then(res => res.json())
+        //     .then(parsedRes => {
+        //         console.log(parsedRes);
+        //     });
     };
 };
 
