@@ -1,153 +1,122 @@
 import React, { Component } from 'react';
-import { View, Image, Text, Button, StyleSheet, TouchableOpacity, Platform, Dimensions } from 'react-native';
-import { connect } from 'react-redux';
-import MapView from 'react-native-maps';
+import { View, Text, Button, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
-import { deletePlace } from '../../store/actions/index/';
+import { connect } from 'react-redux';
+import { deletePlace } from '../../store/actions/index';
 
-class PlaceDetail extends Component {
-    state = {
-        viewMode: Dimensions.get("window").height > 500 ? "portrait" : "landscape",
-        focusedLocation: {
-            latitude: 37.7900352,
-            longitude: -122.4013726,
-            latitudeDelta: 0.0122,
-            longitudeDelta:
-                Dimensions.get("window").width /
-                Dimensions.get("window").height *
-                0.0122
-        }
-    }
+import MapView from 'react-native-maps';
 
-    constructor(props) {
-        super(props);
-        Dimensions.addEventListener("change", this.updateStyles);
-    }
+class PlaceDetailScreen extends Component {
 
-    componentWillUnmount() {
-        Dimensions.removeEventListener("change", this.updateStyles);
-    }
+	state = {
+		viewMode: Dimensions.get('window').height < 650 ? 'landscape': 'portrait',
+	}
 
-    updateStyles = (dims) => {
-        this.setState({
-            viewMode: dims.window.height > 500 ? "portrait" : "landscape"
-        })
-    }
+	constructor(props) {
+		super(props);
+		Dimensions.addEventListener('change', this.updateStyles);
+	}
 
-    placeDeletedHandler = () => {
-        this.props.onDeletePlace(this.props.selectedPlace.key);
-        this.props.navigator.pop();
-    }
+	componentWillUnmount() {
+		Dimensions.removeEventListener('change', this.updateStyles);
+	}
 
-    pickLocationHandler = event => {
-        const coords = event.nativeEvent.coordinate;
-        this.map.animateToRegion({
-            ...this.state.focusedLocation,
-            latitude: coords.latitude,
-            longitude: coords.longitude
-        });
+	updateStyles = (dims) => {
+		this.setState({
+			viewMode: dims.window.height < 650 ? 'landscape': 'portrait'
+		});
+	}
 
-        this.setState(prevState => {
-            return {
-                focusedLocation: {
-                    ...prevState.focusedLocation,
-                    latitude: coords.latitude,
-                    longitude: coords.longitude
-                },
-                locationChosen: true
-            }
-        });
-    }
+	placeDeleteHandler = () => {
+		let placeKey = this.props.selectedPlace.key;
+		this.props.onDeletePlace(placeKey);
 
-    render() {
-        return (
-            <View style={[
-                styles.container,
-                this.state.viewMode === "portrait"
-                    ? styles.portraitContainer
-                    : styles.landscapeContainer]}>
-                <View style={styles.placeDetailContainer}>
-                    <View style={styles.subContainer}>
-                        <Image
-                            source={this.props.selectedPlace.image}
-                            style={styles.placeImage} />
-                    </View>
-                    <View style={styles.subContainer}>
-                        <MapView
-                            initialRegion={{
-                                ...this.props.selectedPlace.location,
-                                latitudeDelta: 0.0122,
-                                longitudeDelta:
-                                    Dimensions.get("window").width /
-                                    Dimensions.get("window").height *
-                                    0.0122
-                            }}
-                            style={styles.map}
-                            onPress={this.pickLocationHandler} >
-                            <MapView.Marker coordinate={this.props.selectedPlace.location} />
-                        </MapView>
-                    </View>
-                </View>
-                <View style={styles.subContainer}>
-                    <View>
-                        <Text style={styles.placeName}>{this.props.selectedPlace.name}</Text>
-                    </View>
-                    <View>
-                        <TouchableOpacity onPress={this.placeDeletedHandler}>
-                            <View style={styles.deleteButton}>
-                                <Icon
-                                    size={30}
-                                    name={Platform.OS === 'android' ? 'md-trash' : "ios-trash"}
-                                    color="red" />
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View >
-        );
-    }
+		this.props.navigator.pop({
+			animated: true
+		});
+	}
 
+	render() {
+		const focusedLocation = {
+			latitude: 			this.props.selectedPlace.location.latitude,
+      longitude: 			this.props.selectedPlace.location.longitude,
+      latitudeDelta: 	0.0122,
+      longitudeDelta: Dimensions.get('window').width /
+    									Dimensions.get('window').height * 0.0122
+		};
+
+		return (
+			<View style={[
+				styles.container, 
+				this.state.viewMode === 'portrait' ? 
+					styles.portraitContainer : 
+					styles.landscapeContainer
+			]}>
+				<View style={styles.subcontainer}>
+					<Image source={this.props.selectedPlace.image}  style={styles.placeImage} />
+				</View>
+
+				<View style={styles.subcontainer}>
+					<MapView style={styles.map}
+				    initialRegion={focusedLocation}>
+				    	<MapView.Marker coordinate={focusedLocation} />
+			    </MapView>
+				</View>
+
+				<View style={styles.subcontainer}>
+					<View>
+						<Text style={styles.placeText}>{this.props.selectedPlace.name}</Text>
+					</View>
+
+					<View>
+						<TouchableOpacity onPress={this.placeDeleteHandler}>
+							<Icon name="ios-trash" size={30} color="red" />
+						</TouchableOpacity>
+					</View>
+				</View>
+			</View>
+		);
+	}
 };
 
 const styles = StyleSheet.create({
-    container: {
-        margin: 100,
-        flex: 1
-    },
-    portraitContainer: {
-        flexDirection: "column"
-    },
-    placeDetailContainer: {
-        flex: 2
-    },
-    landscapeContainer: {
-        flexDirection: "row"
-    },
-    placeImage: {
-        width: "100%",
-        height: "100%"
-    },
-    placeName: {
-        fontWeight: "bold",
-        textAlign: "center",
-        fontSize: 28
-    },
-    deleteButton: {
-        alignItems: "center"
-    },
-    subContainer: {
-        flex: 1
-    },
-    map: {
-        ...StyleSheet.absoluteFillObject
-    }
+  container: {
+    margin: 22,
+    flex: 1
+  },
+  portraitContainer: {
+  	flexDirection: "column"
+  },
+  landscapeContainer: {
+  	flexDirection: "row"
+  },
+  placeImage: {
+    height: 200,
+    width: "100%"
+  },
+  placeText: {
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: 28
+  },
+  deleteButton: {
+  	alignItems: "center"
+  },
+  subcontainer: {
+  	flex: 1,
+  	alignItems: "center"
+  },
+  map: {
+		width: "100%",
+		height: 150
+	}
 });
 
 const mapDispatchToProps = dispatch => {
-    return {
-        onDeletePlace: (key) => dispatch(deletePlace(key))
-    }
+	return {
+		onDeletePlace: (key) => dispatch(deletePlace(key))
+	}
 }
 
-export default connect(null, mapDispatchToProps)(PlaceDetail);
+export default connect(null, mapDispatchToProps)(PlaceDetailScreen);
