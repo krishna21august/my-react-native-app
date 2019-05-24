@@ -1,37 +1,51 @@
-import * as actionTypes from './actionTypes';
+import { ADD_PLACE, DELETE_PLACE } from './actionTypes';
 
 export const addPlace = (placeName, location, image) => {
-    return dispatch => {
-        const placeData = {
-            name: placeName,
-            location: location
-        }
-        fetch("https://us-central1-rn-course-1554131679313.cloudfunctions.net/storeImage", {
-            method: "POST",
-            body: JSON.stringify({
-                image: image.base64
-            })
-        })
-            .catch(err => console.log(err))
-            .then(res => res.json())
-            .then(parsedRes => {
-                console.log(parsedRes);
-            })
-        // fetch("https://rn-course-1554131679313.firebaseio.com/places.json", {
-        //     method: "POST",
-        //     body: JSON.stringify(placeData)
-        // })
-        //     .catch(err => console.log(err))
-        //     .then(res => res.json())
-        //     .then(parsedRes => {
-        //         console.log(parsedRes);
-        //     });
-    };
+	/* 
+	// Default action type without thunk middleware
+	return {
+		type: 			ADD_PLACE,
+		placeName: 	placeName,
+		location: 	location,
+		image: 			image
+	};
+	*/
+
+	return dispatch => {
+
+		const placeData = {
+			placeName: 	placeName,
+			location: 	location,
+			image: 			image
+		};
+
+		return fetch('https://react-native-cou-1522393067826.firebaseio.com/places.json', {
+			method: 'POST',
+			body: JSON.stringify(placeData)
+		})
+		.then((response) => response.json())
+		.then((parseResponse) => {
+			console.log('image');
+			console.log(image);	
+			console.log(parseResponse);
+
+			return {
+				type: 			ADD_PLACE,
+				placeName: 	placeName,
+				location: 	location,
+				image: 			image
+			};
+		})
+		.catch((error) => {
+			console.error(error);
+		});
+
+	};
 };
 
 export const deletePlace = (key) => {
-    return {
-        type: actionTypes.DELETE_PLACE,
-        placeKey: key
-    };
+	return {
+		type: DELETE_PLACE,
+		placeKey: key
+	};
 };
